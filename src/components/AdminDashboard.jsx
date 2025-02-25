@@ -9,7 +9,7 @@ const countryCodes = [
   { code: '+971', country: 'UAE' },
   { code: '+65', country: 'Singapore' },
   { code: '+61', country: 'Australia' },
-  // Add more country codes as needed
+   
 ];
 
 const ApplicationModal = ({ application, onClose }) => {
@@ -90,7 +90,7 @@ const ApplicationModal = ({ application, onClose }) => {
 const AdminDashboard = () => {
   const [form, setForm] = useState({ 
     guest_name: '', 
-    phone_number: '+91', // Initialize with India code
+    phone_number: '+91',  
     room_number: '', 
     room_sharing_details: '' 
   });
@@ -206,6 +206,132 @@ const AdminDashboard = () => {
           ? new Date(b.createdAt) - new Date(a.createdAt)
           : new Date(a.createdAt) - new Date(b.createdAt);
       });
+  };
+
+  const renderApplicationDetails = (application) => {
+    return (
+      <div className="modal-body">
+        <div className="row g-3">
+          <div className="col-md-6">
+            <label className="fw-bold">Guest Name:</label>
+            <p>{application.guest_name}</p>
+          </div>
+          
+          <div className="col-md-6">
+            <label className="fw-bold">Phone Number:</label>
+            <p>{application.phone_number}</p>
+          </div>
+
+          <div className="col-md-6">
+            <label className="fw-bold">First Name:</label>
+            <p>{application.first_name}</p>
+          </div>
+
+          <div className="col-md-6">
+            <label className="fw-bold">Last Name:</label>
+            <p>{application.last_name}</p>
+          </div>
+
+          <div className="col-md-6">
+            <label className="fw-bold">Father's/Guardian's Name:</label>
+            <p>{application.father_guardian_name || 'Not provided'}</p>
+          </div>
+
+          <div className="col-md-6">
+            <label className="fw-bold">Father's/Guardian's Contact:</label>
+            <p>{application.father_guardian_contact || 'Not provided'}</p>
+          </div>
+
+          <div className="col-md-6">
+            <label className="fw-bold">Date of Birth:</label>
+            <p>{application.date_of_birth ? new Date(application.date_of_birth).toLocaleDateString() : 'Not provided'}</p>
+          </div>
+
+          <div className="col-md-6">
+            <label className="fw-bold">Blood Group:</label>
+            <p>{application.blood_group || 'Not provided'}</p>
+          </div>
+
+          <div className="col-12">
+            <label className="fw-bold">Email:</label>
+            <p>{application.email || 'Not provided'}</p>
+          </div>
+
+          <div className="col-12">
+            <label className="fw-bold">Permanent Address:</label>
+            <p>{application.permanent_address || 'Not provided'}</p>
+          </div>
+
+          <div className="col-md-6">
+            <label className="fw-bold">Employment:</label>
+            <p>{application.employment || 'Not provided'}</p>
+          </div>
+
+          <div className="col-md-6">
+            <label className="fw-bold">EMP ID:</label>
+            <p>{application.emp_id || 'Not provided'}</p>
+          </div>
+
+          <div className="col-12">
+            <label className="fw-bold">Educational Qualification:</label>
+            <p>{application.educational_qualification || 'Not provided'}</p>
+          </div>
+
+          <div className="col-12">
+            <label className="fw-bold">Office Address:</label>
+            <p>{application.office_address || 'Not provided'}</p>
+          </div>
+
+          <div className="col-md-6">
+            <label className="fw-bold">Room Number:</label>
+            <p>{application.room_number}</p>
+          </div>
+
+          <div className="col-md-6">
+            <label className="fw-bold">Room Sharing:</label>
+            <p>{application.room_sharing_details}</p>
+          </div>
+
+          <div className="col-12">
+            <label className="fw-bold">Status:</label>
+            <p>
+              <span className={`badge bg-${application.status === 'completed' ? 'success' : 'warning'}`}>
+                {application.status}
+              </span>
+            </p>
+          </div>
+
+          {application.aadhaar_url && (
+            <div className="col-md-6">
+              <label className="fw-bold">Aadhaar Document:</label>
+              <div>
+                <a href={application.aadhaar_url} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-primary">
+                  <i className="bi bi-file-earmark-text me-1"></i>
+                  View Aadhaar
+                </a>
+              </div>
+            </div>
+          )}
+
+          {application.photo_url && (
+            <div className="col-md-6">
+              <label className="fw-bold">Photo:</label>
+              <div>
+                <a href={application.photo_url} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-primary">
+                  <i className="bi bi-image me-1"></i>
+                  View Photo
+                </a>
+              </div>
+            </div>
+          )}
+
+          <div className="col-12">
+            <label className="fw-bold">Created At:</label>
+            <p>{new Date(application.createdAt).toLocaleString()}</p>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -357,43 +483,43 @@ const AdminDashboard = () => {
                 </div>
               ) : (
                 <div className="table-responsive">
-                  <table className="table table-hover">
+                  <table className="table table-hover align-middle">
                     <thead>
                       <tr>
                         <th>ID</th>
-                        <th>Name</th>
+                        <th>Guest Name</th>
                         <th>Phone</th>
                         <th>Room</th>
                         <th>Status</th>
+                        <th>Created</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {filterApplications(applications).map(app => (
-                        <tr key={app.id}>
-                          <td>{app.id}</td>
-                          <td>{app.guest_name}</td>
-                          <td>{app.phone_number}</td>
-                          <td>{app.room_number}</td>
+                      {filterApplications(applications).map(application => (
+                        <tr key={application.id}>
+                          <td>{application.id}</td>
+                          <td>{application.guest_name}</td>
+                          <td>{application.phone_number}</td>
+                          <td>{application.room_number}</td>
                           <td>
-                            <span className={`badge bg-${app.status === 'completed' ? 'success' : 'warning'}`}>
-                              {app.status}
+                            <span className={`badge bg-${application.status === 'completed' ? 'success' : 'warning'}`}>
+                              {application.status}
                             </span>
                           </td>
+                          <td>{new Date(application.createdAt).toLocaleDateString()}</td>
                           <td>
-                            <div className="btn-group">
+                            <div className="btn-group btn-group-sm">
                               <button 
-                                onClick={() => handleViewDetails(app.id)}
-                                className="btn btn-sm btn-info"
-                                title="View Details"
+                                className="btn btn-outline-primary"
+                                onClick={() => setSelectedApplication(application)}
                               >
                                 <i className="bi bi-eye"></i>
                               </button>
                               <button 
-                                onClick={() => handleDelete(app.id)}
-                                className="btn btn-sm btn-danger"
+                                className="btn btn-outline-danger"
+                                onClick={() => handleDelete(application.id)}
                                 disabled={isDeleting}
-                                title="Delete"
                               >
                                 <i className="bi bi-trash"></i>
                               </button>
@@ -416,10 +542,22 @@ const AdminDashboard = () => {
       </div>
 
       {selectedApplication && (
-        <ApplicationModal 
-          application={selectedApplication} 
-          onClose={() => setSelectedApplication(null)} 
-        />
+        <div className="modal show d-block" tabIndex="-1" style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title"> Fill the application details</h5>
+                <button type="button" className="btn-close" onClick={() => setSelectedApplication(null)}></button>
+              </div>
+              {renderApplicationDetails(selectedApplication)}
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setSelectedApplication(null)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
