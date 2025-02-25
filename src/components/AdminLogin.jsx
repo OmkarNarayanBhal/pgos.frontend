@@ -21,10 +21,15 @@ const AdminLogin = () => {
     setError('');
     try {
       console.log('Submitting login...');
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/admin/login`, { 
-        username, 
-        password 
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/admin/login`, 
+        { username, password },
+        {
+          timeout: 15000, // 15 second timeout
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
       
       console.log('Login response:', response.data);
       
@@ -38,7 +43,13 @@ const AdminLogin = () => {
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError(err.response?.data?.error || 'Login failed');
+      if (err.code === 'ECONNABORTED') {
+        setError('Connection timed out. Please try again.');
+      } else if (err.code === 'ERR_NETWORK') {
+        setError('Unable to connect to server. Please check your connection.');
+      } else {
+        setError(err.response?.data?.error || 'Login failed');
+      }
     }
   };
 
