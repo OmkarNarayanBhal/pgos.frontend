@@ -2,11 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { compressImage } from '../utils/imageCompression';
+import TermsAndConditions from './TermsAndConditions';
 
 const GuestForm = () => {
   const [application, setApplication] = useState(null);
-  const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('');
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    father_guardian_name: '',
+    father_guardian_contact: '',
+    date_of_birth: '',
+    blood_group: '',
+    permanent_address: '',
+    employment: '',
+    emp_id: '',
+    educational_qualification: '',
+    office_address: ''
+  });
   const [aadhaar, setAadhaar] = useState(null);
   const [photo, setPhoto] = useState(null);
   const location = useLocation();
@@ -24,6 +37,9 @@ const GuestForm = () => {
     aadhaar: useRef(null),
     photo: useRef(null)
   };
+
+  const [showTerms, setShowTerms] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   useEffect(() => {
     const token = new URLSearchParams(location.search).get('token');
@@ -62,18 +78,18 @@ const GuestForm = () => {
       const file = e.target.files[0];
       if (!file) return;
 
-      // Validate file type
+       
       const validTypes = ['image/jpeg', 'image/png', 'image/heic', 'application/pdf'];
       if (!validTypes.includes(file.type)) {
         throw new Error('Invalid file type. Please upload an image or PDF.');
       }
 
-      // Compress image if it's not a PDF
+     
       const processedFile = file.type !== 'application/pdf' 
         ? await compressImage(file)
         : file;
 
-      // Create preview if it's an image
+    
       if (file.type.startsWith('image/')) {
         setPreviews(prev => ({
           ...prev,
@@ -81,7 +97,7 @@ const GuestForm = () => {
         }));
       }
 
-      // Update form data
+      
       if (type === 'aadhaar') {
         setAadhaar(processedFile);
       } else {
@@ -93,7 +109,7 @@ const GuestForm = () => {
     }
   };
 
-  // Add preview component
+   
   const FilePreview = ({ type }) => {
     const preview = previews[type];
     const file = type === 'aadhaar' ? aadhaar : photo;
@@ -150,7 +166,7 @@ const GuestForm = () => {
             } else {
               setPhoto(null);
             }
-            // Clean up the URL object
+             
             if (preview) {
               URL.revokeObjectURL(preview);
             }
@@ -162,58 +178,63 @@ const GuestForm = () => {
     );
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
     
     try {
-        const token = new URLSearchParams(location.search).get('token');
-        if (!token) {
-            throw new Error('No token found in URL');
+      const token = new URLSearchParams(location.search).get('token');
+      if (!token) {
+        throw new Error('No token found in URL');
+      }
+
+      if (!formData.first_name || !formData.last_name || !formData.permanent_address || !formData.date_of_birth) {
+        throw new Error('Please fill in all required fields');
+      }
+
+      if (!aadhaar || !photo) {
+        throw new Error('Both Aadhaar and photo files are required');
+      }
+
+      const submitData = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        submitData.append(key, value);
+      });
+      submitData.append('aadhaar', aadhaar);
+      submitData.append('photo', photo);
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/applications/guest/${token}`,
+        submitData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         }
+      );
 
-        
-        if (!aadhaar || !photo) {
-            throw new Error('Both Aadhaar and photo files are required');
-        }
-
-        const formData = new FormData();
-        formData.append('email', email);
-        formData.append('address', address);
-        formData.append('aadhaar', aadhaar);
-        formData.append('photo', photo);
-
-        console.log('Submitting form with data:', {
-            token,
-            email,
-            address,
-            aadhaarFile: aadhaar.name,
-            photoFile: photo.name
-        });
-
-        const response = await axios.post(
-            `${import.meta.env.VITE_API_URL}/applications/guest/${token}`, 
-            formData,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            }
-        );
-
-        console.log('Form submission response:', response.data);
-        setIsExpired(true);
-        alert('Application submitted successfully');
+      console.log('Form submission response:', response.data);
+      setIsExpired(true);
+      alert('Application submitted successfully');
     } catch (error) {
-        console.error('Form submission error:', error);
-        if (error.response?.data?.error === 'Invalid or expired link') {
-            setIsExpired(true);
-        }
-        setError(error.response?.data?.error || error.message || 'An error occurred');
+      console.error('Form submission error:', error);
+      setError(error.response?.data?.error || error.message || 'An error occurred');
     } finally {
-        setIsSubmitting(false);
+      setIsSubmitting(false);
     }
+  };
+
+  const handleShowTerms = () => {
+    setShowTerms(true);
   };
 
   if (isExpired) {
@@ -234,50 +255,167 @@ const GuestForm = () => {
         <div className="col-12 col-md-8 col-lg-6">
           <form onSubmit={handleSubmit} className="card">
             <div className="card-body">
-              <h2 className="card-title text-center mb-4">Complete Your Application</h2>
-              
-              <div className="mb-3">
-                <label className="form-label fw-bold">Name:</label>
-                <p className="mb-0">{application.guest_name}</p>
+              <h2 className="card-title text-center mb-4">TARA CO-LIVING PG</h2>
+              <h6 className="card-title text-center mb-4">#8, 2nd Cross, Annaiah Reddy Layout, Bellandur, Bangalore - 560103
+              Mobile : 9491512258</h6>
+
+              <div className="row g-3 mb-3">
+                <div className="col-12 col-md-4 d-flex align-items-center">
+                  <label className="form-label fw-bold mb-0 me-2">Name:</label>
+                  <p className="mb-0">{application?.guest_name}</p>
+                </div>
+                
+                <div className="col-12 col-md-4 d-flex align-items-center">
+                  <label className="form-label fw-bold mb-0 me-2">Room Number:</label>
+                  <p className="mb-0">{application?.room_number}</p>
+                </div>
+                
+                <div className="col-12 col-md-4 d-flex align-items-center">
+                  <label className="form-label fw-bold mb-0 me-2">Room Sharing:</label>
+                  <p className="mb-0">{application?.room_sharing_details}</p>
+                </div>
               </div>
-              
-              <div className="mb-3">
-                <label className="form-label fw-bold">Phone:</label>
-                <p className="mb-0">{application.phone_number.replace(/(\+\d{1,3})(\d{10})/, '$1 $2')}</p>
+
+              <h5 className="mb-3">To be filled by User</h5>
+
+              <div className="row g-3">
+                <div className="col-md-6">
+                  <label className="form-label">First Name *</label>
+                  <input 
+                    type="text"
+                    className="form-control"
+                    name="first_name"
+                    value={formData.first_name}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label">Last Name *</label>
+                  <input 
+                    type="text"
+                    className="form-control"
+                    name="last_name"
+                    value={formData.last_name}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+
+                <div className="col-12">
+                  <label className="form-label">Email</label>
+                  <input 
+                    type="email"
+                    className="form-control"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label">Father's/Guardian's Name</label>
+                  <input 
+                    type="text"
+                    className="form-control"
+                    name="father_guardian_name"
+                    value={formData.father_guardian_name}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label">Father's/Guardian's Contact</label>
+                  <input 
+                    type="tel"
+                    className="form-control"
+                    name="father_guardian_contact"
+                    value={formData.father_guardian_contact}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label">Date of Birth *</label>
+                  <input 
+                    type="date"
+                    className="form-control"
+                    name="date_of_birth"
+                    value={formData.date_of_birth}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label">Blood Group</label>
+                  <input 
+                    type="text"
+                    className="form-control"
+                    name="blood_group"
+                    value={formData.blood_group}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="col-12">
+                  <label className="form-label">Permanent Address *</label>
+                  <textarea 
+                    className="form-control"
+                    name="permanent_address"
+                    value={formData.permanent_address}
+                    onChange={handleInputChange}
+                    rows="3"
+                    required
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label">Employment</label>
+                  <input 
+                    type="text"
+                    className="form-control"
+                    name="employment"
+                    value={formData.employment}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label">EMP ID NO</label>
+                  <input 
+                    type="text"
+                    className="form-control"
+                    name="emp_id"
+                    value={formData.emp_id}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="col-12">
+                  <label className="form-label">Educational Qualification</label>
+                  <input 
+                    type="text"
+                    className="form-control"
+                    name="educational_qualification"
+                    value={formData.educational_qualification}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="col-12">
+                  <label className="form-label">Office Address</label>
+                  <textarea 
+                    className="form-control"
+                    name="office_address"
+                    value={formData.office_address}
+                    onChange={handleInputChange}
+                    rows="3"
+                  />
+                </div>
               </div>
-              
-              <div className="mb-3">
-                <label className="form-label fw-bold">Room Number:</label>
-                <p className="mb-0">{application.room_number}</p>
-              </div>
-              
-              <div className="mb-3">
-                <label className="form-label fw-bold">Room Sharing:</label>
-                <p className="mb-0">{application.room_sharing_details}</p>
-              </div>
-              
-              <div className="mb-3">
-                <label className="form-label">Email:</label>
-                <input 
-                  type="email" 
-                  className="form-control" 
-                  value={email} 
-                  onChange={(e) => setEmail(e.target.value)} 
-                  required 
-                />
-              </div>
-              
-              <div className="mb-3">
-                <label className="form-label">Address:</label>
-                <textarea 
-                  className="form-control" 
-                  value={address} 
-                  onChange={(e) => setAddress(e.target.value)} 
-                  rows="3"
-                  required 
-                />
-              </div>
-              
+
               <div className="mb-3">
                 <label className="form-label">Aadhaar Upload:</label>
                 <div className="d-flex flex-column gap-2">
@@ -366,10 +504,30 @@ const GuestForm = () => {
                 <div className="alert alert-danger py-2 mb-3">{error}</div>
               )}
               
+              <div className="form-check mb-3">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="acceptTerms"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                />
+                <label className="form-check-label" htmlFor="acceptTerms">
+                  I have read and agree to the{' '}
+                  <button 
+                    type="button" 
+                    className="btn btn-link p-0 d-inline text-decoration-underline"
+                    onClick={handleShowTerms}
+                  >
+                    Terms and Conditions
+                  </button>
+                </label>
+              </div>
+
               <button 
                 type="submit" 
                 className="btn btn-primary w-100" 
-                disabled={isSubmitting}
+                disabled={isSubmitting || !acceptedTerms}
               >
                 {isSubmitting ? 'Submitting...' : 'Submit'}
               </button>
@@ -377,6 +535,9 @@ const GuestForm = () => {
           </form>
         </div>
       </div>
+      {showTerms && (
+        <TermsAndConditions onClose={() => setShowTerms(false)} />
+      )}
     </div>
   );
 };
