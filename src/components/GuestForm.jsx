@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { compressImage } from '../utils/imageCompression';
 import TermsAndConditions from './TermsAndConditions';
+import taraHeader from './assets/tara_header.jpg';
 
 const GuestForm = () => {
   const [application, setApplication] = useState(null);
@@ -257,7 +258,7 @@ const GuestForm = () => {
             <div className="card-body">
             <div className="text-center mb-4">
                 <img 
-                  src="/public/tara_header.jpg" 
+                  src={taraHeader} 
                   alt="TARA CO-LIVING PG" 
                   className="img-fluid"
                   style={{
