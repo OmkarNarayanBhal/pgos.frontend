@@ -336,15 +336,37 @@ const AdminDashboard = () => {
 
   return (
     <div className="container-fluid px-3 px-md-4 py-4">
-      <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
-        <h2 className="h3 mb-3 mb-md-0">Admin Dashboard</h2>
-        <button 
-          onClick={handleLogout} 
-          className="btn btn-outline-danger"
-        >
-          Logout
-        </button>
-      </div>
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 py-3 px-4 bg-white rounded shadow-sm border">
+  {/* Left Section - Title & Icon */}
+  <div className="d-flex align-items-center">
+    <div className="bg-primary rounded-circle p-3 me-3 shadow-sm d-flex justify-content-center align-items-center">
+      <i className="bi bi-speedometer2 text-white fs-3"></i>
+    </div>
+    <div>
+      <h2 className="h4 mb-1 fw-bold text-primary">
+        <span className="border-bottom border-2 border-primary pb-1">Admin Dashboard</span>
+      </h2>
+      <p className="text-muted mb-0 small">Welcome back, <strong>Administrator</strong></p>
+    </div>
+  </div>
+
+  {/* Right Section - Action Buttons */}
+  <div className="d-flex gap-3 mt-3 mt-md-0">
+     
+
+    {/* Logout */}
+    <button
+      onClick={handleLogout}
+      className="btn btn-sm btn-outline-danger d-flex align-items-center px-3 py-2"
+      title="Logout"
+      aria-label="Logout"
+    >
+      <i className="bi bi-box-arrow-right me-2 fs-5"></i>
+      Logout
+    </button>
+  </div>
+</div>
+
       
       {error && <div className="alert alert-danger">{error}</div>}
       
