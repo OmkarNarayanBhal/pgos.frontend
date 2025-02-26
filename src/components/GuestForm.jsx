@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { compressImage } from '../utils/imageCompression';
 import TermsAndConditions from './TermsAndConditions';
-import taraHeader from './assets/tara_header.jpg';
+import taraHeader from '../assets/tara_header.jpg';
 
 const GuestForm = () => {
   const [application, setApplication] = useState(null);
