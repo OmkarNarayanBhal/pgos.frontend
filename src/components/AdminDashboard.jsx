@@ -450,7 +450,7 @@ const AdminDashboard = () => {
                       className="btn btn-primary w-100"
                       disabled={isSubmitting}
                     >
-                      {isSubmitting ? 'Creating...' : 'Send OnBoarding form'}
+                      {isSubmitting ? 'Creating...' : 'Send registration form'}
                     </button>
                   </div>
                 </div>
