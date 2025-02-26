@@ -213,7 +213,7 @@ const AdminDashboard = () => {
       <div className="modal-body">
         <div className="row g-3">
           <div className="col-md-6">
-            <label className="fw-bold">Guest Name:</label>
+            <label className="fw-bold">Resident Name:</label>
             <p>{application.guest_name}</p>
           </div>
           
@@ -352,14 +352,14 @@ const AdminDashboard = () => {
         <div className="col-12 col-lg-4">
           <div className="card">
             <div className="card-body">
-              <h5 className="card-title mb-3">Add New Application</h5>
+              <h5 className="card-title mb-3">Add Resident</h5>
               <form onSubmit={handleSubmit} className="mb-4">
                 <div className="row g-3">
                   <div className="col-12 col-sm-6">
-                    <label className="form-label">Guest Name</label>
+                    <label className="form-label">Resident Name</label>
                     <input 
                       className="form-control" 
-                      placeholder="Enter guest name" 
+                      placeholder="Enter name" 
                       value={form.guest_name} 
                       onChange={(e) => setForm({ ...form, guest_name: e.target.value })} 
                       required 
@@ -428,7 +428,7 @@ const AdminDashboard = () => {
                       className="btn btn-primary w-100"
                       disabled={isSubmitting}
                     >
-                      {isSubmitting ? 'Creating...' : 'Create Application'}
+                      {isSubmitting ? 'Creating...' : 'Send OnBoarding form'}
                     </button>
                   </div>
                 </div>
@@ -440,7 +440,7 @@ const AdminDashboard = () => {
         <div className="col-12 col-lg-8">
           <div className="card">
             <div className="card-body">
-              <h5 className="card-title mb-3">Applications</h5>
+              <h5 className="card-title mb-3">Residents</h5>
               <div className="row g-3 mb-3">
                 <div className="col-12 col-md-4">
                   <input
@@ -458,7 +458,7 @@ const AdminDashboard = () => {
                       value={filter} 
                       onChange={(e) => setFilter(e.target.value)}
                     >
-                      <option value="all">All Applications</option>
+                      <option value="all">All Residents</option>
                       <option value="pending">Pending</option>
                       <option value="completed">Completed</option>
                     </select>
@@ -487,7 +487,7 @@ const AdminDashboard = () => {
                     <thead>
                       <tr>
                         <th>ID</th>
-                        <th>Guest Name</th>
+                        <th>Resident</th>
                         <th>Phone</th>
                         <th>Room</th>
                         <th>Status</th>
@@ -546,7 +546,7 @@ const AdminDashboard = () => {
           <div className="modal-dialog modal-lg">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title"> Fill the application details</h5>
+                <h5 className="modal-title"> Resident Details</h5>
                 <button type="button" className="btn-close" onClick={() => setSelectedApplication(null)}></button>
               </div>
               {renderApplicationDetails(selectedApplication)}
