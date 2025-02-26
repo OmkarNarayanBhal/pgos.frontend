@@ -255,11 +255,21 @@ const GuestForm = () => {
         <div className="col-12 col-md-8 col-lg-6">
           <form onSubmit={handleSubmit} className="card">
             <div className="card-body">
-              <h2 className="card-title text-center mb-4">TARA CO-LIVING PG</h2>
-              <h6 className="card-title text-center mb-4">#8, 2nd Cross, Annaiah Reddy Layout, Bellandur, Bangalore - 560103
-              Mobile : 9491512258</h6>
+            <div className="text-center mb-4">
+                <img 
+                  src="/public/tara_header.jpg" 
+                  alt="TARA CO-LIVING PG" 
+                  className="img-fluid"
+                  style={{
+                    maxWidth: '100%',
+                    height: 'auto',
+                    borderRadius: '5px'
+                  }}
+                />
+               
+              </div>
 
-              <div className="row g-3 mb-3">
+              {/* <div className="row g-3 mb-3">
                 <div className="col-12 col-md-4 d-flex align-items-center">
                   <label className="form-label fw-bold mb-0 me-2">Name:</label>
                   <p className="mb-0">{application?.guest_name}</p>
@@ -274,9 +284,9 @@ const GuestForm = () => {
                   <label className="form-label fw-bold mb-0 me-2">Room Sharing:</label>
                   <p className="mb-0">{application?.room_sharing_details}</p>
                 </div>
-              </div>
+              </div> */}
 
-              <h5 className="mb-3">To be filled by User</h5>
+              <h5 className="mb-3">Registration form</h5>
 
               <div className="row g-3">
                 <div className="col-md-6">
@@ -503,7 +513,13 @@ const GuestForm = () => {
               {error && (
                 <div className="alert alert-danger py-2 mb-3">{error}</div>
               )}
-              
+              <button 
+                    type="button" 
+                    className="btn btn-link p-0 d-inline text-decoration-underline"
+                    onClick={handleShowTerms}
+                  >
+                    Terms and Conditions
+                  </button>
               <div className="form-check mb-3">
                 <input
                   type="checkbox"
@@ -514,13 +530,7 @@ const GuestForm = () => {
                 />
                 <label className="form-check-label" htmlFor="acceptTerms">
                   I have read and agree to the{' '}
-                  <button 
-                    type="button" 
-                    className="btn btn-link p-0 d-inline text-decoration-underline"
-                    onClick={handleShowTerms}
-                  >
-                    Terms and Conditions
-                  </button>
+                  
                 </label>
               </div>
 
